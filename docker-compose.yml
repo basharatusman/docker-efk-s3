@@ -1,0 +1,85 @@
+version: "3.8"
+
+services:
+  web:
+    image: httpd
+    ports:
+      - "80:80"
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: httpd.access
+
+  curator: 
+    build: 
+      context: curator/
+    init: true
+    volumes:
+      - type: bind
+        source: ./curator/config/curator.yml
+        target: /usr/share/curator/config/curator.yml
+        read_only: true
+      - type: bind
+        source: ./curator/config/delete_log_files_curator.yml
+        target: /usr/share/curator/config/delete_log_files_curator.yml
+        read_only: true
+    links: 
+      - elasticsearch
+
+  fluentd:
+    build: ./fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+    links:
+      - "elasticsearch"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+
+  elasticsearch:
+      build:
+        context: elasticsearch/
+        args:
+          ELK_VERSION: $ELK_VERSION
+      volumes:
+        - type: bind
+          source: ./elasticsearch/config/elasticsearch.yml
+          target: /usr/share/elasticsearch/config/elasticsearch.yml
+          read_only: true
+        - type: volume
+          source: esdata
+          target: /usr/share/elasticsearch/data
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      environment:
+        ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+        ELASTIC_PASSWORD: $ES_PASSWORD
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    links:
+      - "elasticsearch"
+    environment: 
+      - ELASTICSEARCH_USERNAME=$ES_USERNAME
+      - ELASTICSEARCH_PASSWORD=$ES_PASSWORD
+
+volumes:
+  esdata:  
