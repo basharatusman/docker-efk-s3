@@ -12,6 +12,7 @@ services:
       options:
         fluentd-address: localhost:24224
         tag: httpd.access
+        fluentd-async: "true"
 
   curator: 
     build: 
@@ -33,6 +34,9 @@ services:
     build: ./fluentd
     volumes:
       - ./fluentd/conf:/fluentd/etc
+    environment: 
+      - ES_PASSWORD=$ES_PASSWORD
+      - ES_USERNAME=$ES_USERNAME
     links:
       - "elasticsearch"
     ports:
@@ -44,6 +48,7 @@ services:
         context: elasticsearch/
         args:
           ELK_VERSION: $ELK_VERSION
+      container_name: elasticsearch
       volumes:
         - type: bind
           source: ./elasticsearch/config/elasticsearch.yml
