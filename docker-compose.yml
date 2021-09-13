@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   web:
@@ -14,22 +14,6 @@ services:
         tag: httpd.access
         fluentd-async: "true"
 
-  curator: 
-    build: 
-      context: curator/
-    init: true
-    volumes:
-      - type: bind
-        source: ./curator/config/curator.yml
-        target: /usr/share/curator/config/curator.yml
-        read_only: true
-      - type: bind
-        source: ./curator/config/delete_log_files_curator.yml
-        target: /usr/share/curator/config/delete_log_files_curator.yml
-        read_only: true
-    links: 
-      - elasticsearch
-
   fluentd:
     build: ./fluentd
     volumes:
@@ -37,6 +21,11 @@ services:
     environment: 
       - ES_PASSWORD=$ES_PASSWORD
       - ES_USERNAME=$ES_USERNAME
+      - SERVICE1=$SERVICE1
+      - SERVICE1_PREFIX=$SERVICE1_PREFIX
+      - HOST=$HOST
+      - PORT=$PORT
+      - SCHEME=$SCHEME
     links:
       - "elasticsearch"
     ports:
@@ -65,8 +54,11 @@ services:
         - "9200:9200"
         - "9300:9300"
       environment:
-        ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-        ELASTIC_PASSWORD: $ES_PASSWORD
+        - ES_JAVA_OPTS=-Xmx256m -Xms256m
+        - ELASTIC_PASSWORD=$ES_PASSWORD
+        - DISCOVERY_TYPE=$DISCOVERY_TYPE
+        - CLUSTER_NAME=$CLUSTER_NAME
+        - NETWORK_HOST=$NETWORK_HOST
 
   kibana:
     build:
@@ -85,6 +77,11 @@ services:
     environment: 
       - ELASTICSEARCH_USERNAME=$ES_USERNAME
       - ELASTICSEARCH_PASSWORD=$ES_PASSWORD
+      - HOST=$HOST
+      - PORT=$PORT
+      - SCHEME=$SCHEME
+      - PUBLIC_BASE_URL=$PUBLIC_BASE_URL
+      - KIBANA_SERVER_NAME=$KIBANA_SERVER_NAME
 
 volumes:
   esdata:  

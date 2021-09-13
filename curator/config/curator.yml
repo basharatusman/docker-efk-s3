@@ -1,5 +1,0 @@
-client:
-  hosts:
-    - elasticsearch
-  port: 9200
-  http_auth: elasticsearch:9200

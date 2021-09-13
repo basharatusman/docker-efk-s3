@@ -2,9 +2,9 @@
 ## Default Elasticsearch configuration from Elasticsearch base image.
 ## https://github.com/elastic/elasticsearch/blob/master/distribution/docker/src/docker/config/elasticsearch.yml
 #
-cluster.name: "docker-cluster"
-network.host: 0.0.0.0
-discovery.type: single-node
+cluster.name: ${CLUSTER_NAME}
+network.host: ${NETWORK_HOST}
+discovery.type: ${DISCOVERY_TYPE}
 ## X-Pack settings
 ## see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-xpack.html
 xpack.security.enabled: true
