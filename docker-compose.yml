@@ -98,6 +98,7 @@ services:
       - PORT=$PORT
       - SCHEME=$SCHEME
       - PUBLIC_BASE_URL=$PUBLIC_BASE_URL
+      - PUBLIC_URL_SCHEME=$PUBLIC_URL_SCHEME  
       - KIBANA_SERVER_NAME=$KIBANA_SERVER_NAME
     networks:
       - caddy
