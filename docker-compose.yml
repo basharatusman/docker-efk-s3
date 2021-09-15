@@ -36,6 +36,8 @@ services:
       - HOST=$HOST
       - PORT=$PORT
       - SCHEME=$SCHEME
+      - CADDY_PREFIX=$CADDY_PREFIX
+      - CADDY_TAG=$CADDY_TAG
     networks:
       - caddy
     links:
