@@ -95,6 +95,9 @@ services:
       - SCHEME=$SCHEME
       - PUBLIC_BASE_URL=$PUBLIC_BASE_URL
       - KIBANA_SERVER_NAME=$KIBANA_SERVER_NAME
+    labels: 
+      caddy: $KIBANA_ADDRESS
+      caddy.reverse_proxy: "{{upstreams 5601}}"
 
 volumes:
   esdata:
