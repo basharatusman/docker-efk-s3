@@ -13,9 +13,9 @@ services:
       - CADDY_INGRESS_NETWORKS=caddy 
     networks:
       - caddy
-    volumes:                                                                                │
-      - /var/run/docker.sock:/var/run/docker.sock                                           │
-      - caddy_data:/data                                                                    │
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy_data:/data     
     restart: unless-stopped  
     logging:
       driver: "fluentd"
@@ -36,6 +36,8 @@ services:
       - HOST=$HOST
       - PORT=$PORT
       - SCHEME=$SCHEME
+    networks:
+      - caddy
     links:
       - "elasticsearch"
     ports:
@@ -72,6 +74,8 @@ services:
         - DISCOVERY_TYPE=$DISCOVERY_TYPE
         - CLUSTER_NAME=$CLUSTER_NAME
         - NETWORK_HOST=$NETWORK_HOST
+      networks:
+        - caddy
 
   kibana:
     build:
@@ -95,10 +99,16 @@ services:
       - SCHEME=$SCHEME
       - PUBLIC_BASE_URL=$PUBLIC_BASE_URL
       - KIBANA_SERVER_NAME=$KIBANA_SERVER_NAME
+    networks:
+      - caddy
     labels: 
       caddy: $KIBANA_ADDRESS
       caddy.reverse_proxy: "{{upstreams 5601}}"
 
+networks:
+  caddy:
+    external: true
+      
 volumes:
+  caddy_data: {}
   esdata:
-  caddy_data: {}   
