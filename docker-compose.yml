@@ -69,7 +69,7 @@ services:
         - "9200:9200"
         - "9300:9300"
       environment:
-        - ES_JAVA_OPTS=-Xmx256m -Xms256m
+        - ES_JAVA_OPTS=-Xmx1g -Xms1g
         - ELASTIC_PASSWORD=$ES_PASSWORD
         - DISCOVERY_TYPE=$DISCOVERY_TYPE
         - CLUSTER_NAME=$CLUSTER_NAME
