@@ -10,12 +10,22 @@ services:
       - "80:80"
       - "443:443"
     environment: 
-      - CADDY_INGRESS_NETWORKS=caddy 
+      - CADDY_INGRESS_NETWORKS=caddy
+      - CADDY_DOCKER_CADDYFILE_PATH=/Caddyfile
+      - BASE_WEB_ADDRESS=$CADDY_BASE_WEB_ADDRESS
+      - OAUTH_REALM=$OAUTH_REALM
+      - OAUTH_CLIENT=$OAUTH_CLIENT
+      - OAUTH_SECRET=$OAUTH_SECRET
+      - OAUTH_META_URL=$OAUTH_META_URL
+      - OAUTH_BASE_URL=$OAUTH_BASE_URL
+      - OAUTH_TOKEN=$OAUTH_TOKEN 
+      - OAUTH_LOGOUT=$OAUTH_LOGOUT
     networks:
       - caddy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - caddy_data:/data     
+      - caddy_data:/data
+      - ./Caddyfile:/Caddyfile     
     restart: unless-stopped  
     logging:
       driver: "fluentd"
@@ -104,9 +114,6 @@ services:
       - KIBANA_SERVER_NAME=$KIBANA_SERVER_NAME
     networks:
       - caddy
-    labels: 
-      caddy: $KIBANA_ADDRESS
-      caddy.reverse_proxy: "{{upstreams 5601}}"
 
 networks:
   caddy:

@@ -1,0 +1,46 @@
+{$BASE_WEB_ADDRESS} {
+  route /auth* {
+     authp { 
+      ui {
+	links {
+	  "Kibana" /kibana
+          "Logout" /logout
+	 }
+	}	 
+      backends {
+        generic_oauth2_backend {
+          method oauth2
+          realm {$OAUTH_REALM}
+          provider generic
+          client_id {$OAUTH_CLIENT}
+	  client_secret {$OAUTH_SECRET}
+          metadata_url {$OAUTH_META_URL} 
+	  base_auth_url {$OAUTH_BASE_URL}
+          scopes openid email profile
+          identity_token_name {$OAUTH_TOKEN}
+        }
+       }
+      }
+     }
+
+  route /kibana* {
+    jwt {
+      primary yes
+      allow roles authp/admin authp/user
+      validate bearer header
+      set auth url /auth
+      inject headers with claims
+    }
+    uri strip_prefix /kibana
+    reverse_proxy kibana:5601
+  }
+
+  route /* {
+    redir {$BASE_WEB_ADDRESS}/auth/login
+  }
+
+  route /logout {
+    redir {$OAUTH_LOGOUT}
+}
+
+

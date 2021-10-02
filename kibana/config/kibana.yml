@@ -4,6 +4,7 @@
 #
 server.name: ${KIBANA_SERVER_NAME}
 server.host: 0.0.0.0
-server.publicBaseUrl: '${PUBLIC_URL_SCHEME}://${PUBLIC_BASE_URL}'
+server.publicBaseUrl: "${PUBLIC_URL_SCHEME}://${PUBLIC_BASE_URL}/kibana"
+server.basePath: "/kibana"
 elasticsearch.hosts: [ "${SCHEME}://${HOST}:${PORT}" ]
 monitoring.ui.container.elasticsearch.enabled: true
